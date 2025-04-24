@@ -1,0 +1,53 @@
+-- Crear la base de datos InventarioPedidos
+CREATE DATABASE InventarioPedidos;
+GO
+
+-- Seleccionar la base de datos creada para usarla
+USE InventarioPedidos;
+GO
+
+-- Crear la tabla Categorias
+CREATE TABLE Categorias (
+    IdCategoria INT PRIMARY KEY IDENTITY(1,1),  -- Llave primaria, auto incrementada
+    Nombre NVARCHAR(50) NOT NULL,                 -- Nombre de la categoría
+    Descripcion NVARCHAR(250) NULL                -- Descripción de la categoría (opcional)
+);
+GO
+
+-- Crear la tabla Productos
+CREATE TABLE Productos (
+    IdProducto INT PRIMARY KEY IDENTITY(1,1),           -- Llave primaria, auto incrementada
+    IdCategoria INT NOT NULL FOREIGN KEY REFERENCES Categorias(IdCategoria),  -- Llave foránea a Categorias
+    Nombre NVARCHAR(100) NOT NULL,                        -- Nombre del producto
+    Precio DECIMAL(10,2) NOT NULL,                        -- Precio del producto
+    Stock INT NOT NULL                                     -- Cantidad disponible en inventario
+);
+GO
+
+-- Crear la tabla Clientes
+CREATE TABLE Clientes (
+    IdCliente INT PRIMARY KEY IDENTITY(1,1),  -- Llave primaria, auto incrementada
+    Nombre NVARCHAR(100) NOT NULL,             -- Nombre del cliente
+    Email NVARCHAR(100) NOT NULL,              -- Email del cliente
+    Telefono NVARCHAR(20) NULL                 -- Teléfono del cliente (opcional)
+);
+GO
+
+-- Crear la tabla Pedidos
+CREATE TABLE Pedidos (
+    IdPedido INT PRIMARY KEY IDENTITY(1,1),              -- Llave primaria, auto incrementada
+    IdCliente INT NOT NULL FOREIGN KEY REFERENCES Clientes(IdCliente), -- Llave foránea a Clientes
+    FechaPedido DATETIME NOT NULL DEFAULT GETDATE(),      -- Fecha del pedido
+    Total DECIMAL(12,2) NOT NULL                          -- Total del pedido
+);
+GO
+
+-- Crear la tabla PedidoDetalles
+CREATE TABLE PedidoDetalles (
+    IdDetalle INT PRIMARY KEY IDENTITY(1,1),                 -- Llave primaria, auto incrementada
+    IdPedido INT NOT NULL FOREIGN KEY REFERENCES Pedidos(IdPedido), -- Llave foránea a Pedidos
+    IdProducto INT NOT NULL FOREIGN KEY REFERENCES Productos(IdProducto), -- Llave foránea a Productos
+    Cantidad INT NOT NULL,                                     -- Cantidad pedida
+    PrecioUnitario DECIMAL(10,2) NOT NULL                      -- Precio unitario al momento del pedido
+);
+GO
