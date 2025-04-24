@@ -1,0 +1,39 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+
+namespace GestorInventarioPedidosAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PruebaConexionController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+
+        public PruebaConexionController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        // Endpoint para verificar la conexión a la base de datos
+        [HttpGet("verificar")]
+        public IActionResult VerificarConexion()
+        {
+            // Obtener la cadena de conexión desde appsettings.json
+            string connectionString = _configuration.GetConnectionString("InventarioPedidosDB");
+
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    return Ok("Conexión exitosa a la base de datos.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error de conexión: {ex.Message}");
+            }
+        }
+    }
+}
