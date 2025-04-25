@@ -1,0 +1,101 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
+using System.Data;
+using GestorInventarioPedidosAPI.Models;
+
+namespace GestorInventarioPedidosAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CategoriasController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+
+        public CategoriasController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        [HttpGet]
+        public IActionResult Get()
+        {
+            List<Categoria> categorias = new();
+            using SqlConnection connection = new(_configuration.GetConnectionString("InventarioPedidosDB"));
+            string query = "SELECT * FROM Categorias";
+            using SqlCommand cmd = new(query, connection);
+            connection.Open();
+            using SqlDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                categorias.Add(new Categoria
+                {
+                    IdCategoria = (int)reader["IdCategoria"],
+                    Nombre = reader["Nombre"].ToString(),
+                    Descripcion = reader["Descripcion"].ToString()
+                });
+            }
+            return Ok(categorias);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            Categoria? categoria = null;
+            using SqlConnection connection = new(_configuration.GetConnectionString("InventarioPedidosDB"));
+            string query = "SELECT * FROM Categorias WHERE IdCategoria = @Id";
+            using SqlCommand cmd = new(query, connection);
+            cmd.Parameters.AddWithValue("@Id", id);
+            connection.Open();
+            using SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                categoria = new Categoria
+                {
+                    IdCategoria = (int)reader["IdCategoria"],
+                    Nombre = reader["Nombre"].ToString(),
+                    Descripcion = reader["Descripcion"].ToString()
+                };
+            }
+            return categoria != null ? Ok(categoria) : NotFound();
+        }
+
+        [HttpPost]
+        public IActionResult Post([FromBody] Categoria categoria)
+        {
+            using SqlConnection connection = new(_configuration.GetConnectionString("InventarioPedidosDB"));
+            string query = "INSERT INTO Categorias (Nombre, Descripcion) VALUES (@Nombre, @Descripcion)";
+            using SqlCommand cmd = new(query, connection);
+            cmd.Parameters.AddWithValue("@Nombre", categoria.Nombre);
+            cmd.Parameters.AddWithValue("@Descripcion", (object?)categoria.Descripcion ?? DBNull.Value);
+            connection.Open();
+            cmd.ExecuteNonQuery();
+            return Ok("Categoría creada correctamente.");
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody] Categoria categoria)
+        {
+            using SqlConnection connection = new(_configuration.GetConnectionString("InventarioPedidosDB"));
+            string query = "UPDATE Categorias SET Nombre = @Nombre, Descripcion = @Descripcion WHERE IdCategoria = @Id";
+            using SqlCommand cmd = new(query, connection);
+            cmd.Parameters.AddWithValue("@Nombre", categoria.Nombre);
+            cmd.Parameters.AddWithValue("@Descripcion", (object?)categoria.Descripcion ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Id", id);
+            connection.Open();
+            int rows = cmd.ExecuteNonQuery();
+            return rows > 0 ? Ok("Categoría actualizada.") : NotFound();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            using SqlConnection connection = new(_configuration.GetConnectionString("InventarioPedidosDB"));
+            string query = "DELETE FROM Categorias WHERE IdCategoria = @Id";
+            using SqlCommand cmd = new(query, connection);
+            cmd.Parameters.AddWithValue("@Id", id);
+            connection.Open();
+            int rows = cmd.ExecuteNonQuery();
+            return rows > 0 ? Ok("Categoría eliminada.") : NotFound();
+        }
+    }
+}
