@@ -1,0 +1,140 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
+using GestorInventarioPedidosAPI.Models;
+
+namespace GestorInventarioPedidosAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ClientesController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+
+        public ClientesController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        [HttpGet]
+        public IActionResult GetClientes()
+        {
+            List<Cliente> clientes = new List<Cliente>();
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
+            {
+                string query = "SELECT * FROM Clientes";
+                SqlCommand command = new SqlCommand(query, connection);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    clientes.Add(new Cliente
+                    {
+                        IdCliente = (int)reader["IdCliente"],
+                        Nombre = reader["Nombre"].ToString()!,
+                        Email = reader["Email"]?.ToString(),
+                        Telefono = reader["Telefono"]?.ToString()
+                    });
+                }
+
+                connection.Close();
+            }
+
+            return Ok(clientes);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetCliente(int id)
+        {
+            Cliente? cliente = null;
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
+            {
+                string query = "SELECT * FROM Clientes WHERE IdCliente = @id";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@id", id);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    cliente = new Cliente
+                    {
+                        IdCliente = (int)reader["IdCliente"],
+                        Nombre = reader["Nombre"].ToString()!,
+                        Email = reader["Email"]?.ToString(),
+                        Telefono = reader["Telefono"]?.ToString()
+                    };
+                }
+
+                connection.Close();
+            }
+
+            if (cliente == null)
+                return NotFound();
+
+            return Ok(cliente);
+        }
+
+        [HttpPost]
+        public IActionResult CrearCliente([FromBody] Cliente cliente)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
+            {
+                string query = @"INSERT INTO Clientes (Nombre, Email, Telefono)
+                                 VALUES (@nombre, @email, @telefono)";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@nombre", cliente.Nombre);
+                command.Parameters.AddWithValue("@email", (object?)cliente.Email ?? DBNull.Value);
+                command.Parameters.AddWithValue("@telefono", (object?)cliente.Telefono ?? DBNull.Value);
+                connection.Open();
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+
+            return Ok("Cliente creado correctamente");
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult ActualizarCliente(int id, [FromBody] Cliente cliente)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
+            {
+                string query = @"UPDATE Clientes 
+                                 SET Nombre = @nombre, Email = @email, Telefono = @telefono
+                                 WHERE IdCliente = @id";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@nombre", cliente.Nombre);
+                command.Parameters.AddWithValue("@email", (object?)cliente.Email ?? DBNull.Value);
+                command.Parameters.AddWithValue("@telefono", (object?)cliente.Telefono ?? DBNull.Value);
+                connection.Open();
+                int rows = command.ExecuteNonQuery();
+                connection.Close();
+
+                if (rows == 0)
+                    return NotFound();
+            }
+
+            return Ok("Cliente actualizado correctamente");
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult EliminarCliente(int id)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
+            {
+                string query = "DELETE FROM Clientes WHERE IdCliente = @id";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@id", id);
+                connection.Open();
+                int rows = command.ExecuteNonQuery();
+                connection.Close();
+
+                if (rows == 0)
+                    return NotFound();
+            }
+
+            return Ok("Cliente eliminado correctamente");
+        }
+    }
+}
