@@ -1,0 +1,70 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
+using GestorInventarioPedidosAPI.Models;
+
+namespace GestorInventarioPedidosAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PedidosController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+
+        public PedidosController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        [HttpPost]
+        public IActionResult CrearPedido([FromBody] Pedido pedido)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
+                {
+                    string query = "INSERT INTO Pedidos (IdCliente, Fecha) VALUES (@idCliente, @fecha)";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@idCliente", pedido.IdCliente);
+                    command.Parameters.AddWithValue("@fecha", pedido.Fecha);
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    connection.Close();
+                }
+
+                return Ok("Pedido creado correctamente");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Error al crear el pedido: {ex.Message}");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult GetPedidos()
+        {
+            List<Pedido> pedidos = new List<Pedido>();
+
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
+            {
+                string query = "SELECT * FROM Pedidos";
+                SqlCommand command = new SqlCommand(query, connection);
+                connection.Open();
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    pedidos.Add(new Pedido
+                    {
+                        IdPedido = (int)reader["IdPedido"],
+                        IdCliente = (int)reader["IdCliente"],
+                        Fecha = (DateTime)reader["Fecha"]
+                    });
+                }
+
+                connection.Close();
+            }
+
+            return Ok(pedidos);
+        }
+    }
+}
