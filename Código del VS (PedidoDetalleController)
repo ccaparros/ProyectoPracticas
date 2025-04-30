@@ -1,0 +1,117 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
+using GestorInventarioPedidosAPI.Models;
+
+namespace GestorInventarioPedidosAPI.Controllers
+{
+    [ApiController]
+    [Route("api/pedidos/{idPedido}/detalles")]
+    public class PedidoDetallesController : ControllerBase
+    {
+        private readonly IConfiguration _configuration;
+
+        public PedidoDetallesController(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        // GET: api/pedidos/{idPedido}/detalles
+        [HttpGet]
+        public IActionResult GetDetalles(int idPedido)
+        {
+            try
+            {
+                List<object> detalles = new List<object>();
+
+                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
+                {
+                    string query = @"SELECT d.IdProducto, p.Nombre AS NombreProducto, d.Cantidad, d.PrecioUnitario
+                                     FROM PedidoDetalles d
+                                     INNER JOIN Productos p ON d.IdProducto = p.IdProducto
+                                     WHERE d.IdPedido = @idPedido";
+
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@idPedido", idPedido);
+
+                    connection.Open();
+                    SqlDataReader reader = command.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        detalles.Add(new
+                        {
+                            IdProducto = (int)reader["IdProducto"],
+                            NombreProducto = reader["NombreProducto"].ToString(),
+                            Cantidad = (int)reader["Cantidad"],
+                            PrecioUnitario = (decimal)reader["PrecioUnitario"]
+                        });
+                    }
+
+                    connection.Close();
+                }
+
+                return Ok(detalles);
+            }
+            catch (SqlException ex)
+            {
+                return StatusCode(500, $"Error en base de datos: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error inesperado: {ex.Message}");
+            }
+        }
+
+        // POST: api/pedidos/{idPedido}/detalles
+        [HttpPost]
+        public IActionResult AgregarDetalle(int idPedido, [FromBody] PedidoDetalle detalle)
+        {
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
+            {
+                SqlTransaction transaction = null;
+
+                try
+                {
+                    connection.Open();
+                    transaction = connection.BeginTransaction();
+
+                    string query = @"INSERT INTO PedidoDetalles (IdPedido, IdProducto, Cantidad, PrecioUnitario)
+                                     VALUES (@idPedido, @idProducto, @cantidad, @precioUnitario)";
+                    SqlCommand command = new SqlCommand(query, connection, transaction);
+                    command.Parameters.AddWithValue("@idPedido", idPedido);
+                    command.Parameters.AddWithValue("@idProducto", detalle.IdProducto);
+                    command.Parameters.AddWithValue("@cantidad", detalle.Cantidad);
+                    command.Parameters.AddWithValue("@precioUnitario", detalle.PrecioUnitario);
+
+                    int rows = command.ExecuteNonQuery();
+
+                    // Verificamos si se insertó el detalle correctamente
+                    if (rows == 0)
+                    {
+                        transaction.Rollback();
+                        return BadRequest("No se pudo agregar el detalle del pedido.");
+                    }
+
+                    // Confirmamos la transacción
+                    transaction.Commit();
+
+                    return Ok("Detalle de pedido agregado correctamente");
+                }
+                catch (SqlException ex)
+                {
+                    transaction?.Rollback();
+                    return StatusCode(500, $"Error en base de datos: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    transaction?.Rollback();
+                    return StatusCode(500, $"Error inesperado: {ex.Message}");
+                }
+                finally
+                {
+                    connection.Close();
+                }
+            }
+        }
+    }
+}
