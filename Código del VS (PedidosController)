@@ -18,24 +18,42 @@ namespace GestorInventarioPedidosAPI.Controllers
         [HttpPost]
         public IActionResult CrearPedido([FromBody] Pedido pedido)
         {
-            try
+            using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
             {
-                using (SqlConnection connection = new SqlConnection(_configuration.GetConnectionString("InventarioPedidosDB")))
+                // Iniciamos una transacción
+                SqlTransaction transaction = null;
+
+                try
                 {
-                    string query = "INSERT INTO Pedidos (IdCliente, Fecha) VALUES (@idCliente, @fecha)";
-                    SqlCommand command = new SqlCommand(query, connection);
+                    connection.Open();
+                    transaction = connection.BeginTransaction();
+
+                    string query = "INSERT INTO Pedidos (IdCliente, Fecha) VALUES (@idCliente, @fecha); SELECT SCOPE_IDENTITY();";
+                    SqlCommand command = new SqlCommand(query, connection, transaction);
                     command.Parameters.AddWithValue("@idCliente", pedido.IdCliente);
                     command.Parameters.AddWithValue("@fecha", pedido.Fecha);
-                    connection.Open();
-                    command.ExecuteNonQuery();
+
+                    // Ejecutamos el comando para insertar el pedido y obtener el IdPedido generado
+                    var result = command.ExecuteScalar();
+                    int idPedido = Convert.ToInt32(result);
+
+                    // Si necesitas trabajar con los detalles del pedido, podrías hacerlo aquí
+
+                    // Confirmamos la transacción
+                    transaction.Commit();
+
+                    return Ok($"Pedido creado correctamente con Id: {idPedido}");
+                }
+                catch (Exception ex)
+                {
+                    // Si ocurre un error, se revierte la transacción
+                    transaction?.Rollback();
+                    return BadRequest($"Error al crear el pedido: {ex.Message}");
+                }
+                finally
+                {
                     connection.Close();
                 }
-
-                return Ok("Pedido creado correctamente");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Error al crear el pedido: {ex.Message}");
             }
         }
 
