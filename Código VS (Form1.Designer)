@@ -1,0 +1,70 @@
+namespace InventarioPedidosWinForms
+{
+    partial class Form1
+    {
+        /// <summary>
+        ///  Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        ///  Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            comboBoxCategorias = new ComboBox();
+            listBoxCategorias = new ListBox();
+            SuspendLayout();
+            // 
+            // comboBoxCategorias
+            // 
+            comboBoxCategorias.FormattingEnabled = true;
+            comboBoxCategorias.Location = new Point(532, 166);
+            comboBoxCategorias.Name = "comboBoxCategorias";
+            comboBoxCategorias.Size = new Size(121, 23);
+            comboBoxCategorias.TabIndex = 0;
+            // 
+            // listBoxCategorias
+            // 
+            listBoxCategorias.FormattingEnabled = true;
+            listBoxCategorias.ItemHeight = 15;
+            listBoxCategorias.Location = new Point(144, 132);
+            listBoxCategorias.Name = "listBoxCategorias";
+            listBoxCategorias.Size = new Size(120, 94);
+            listBoxCategorias.TabIndex = 1;
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(748, 450);
+            Controls.Add(listBoxCategorias);
+            Controls.Add(comboBoxCategorias);
+            Name = "Form1";
+            Text = "Form1";
+            Load += Form1_Load;
+            ResumeLayout(false);
+        }
+
+        #endregion
+
+        private ComboBox comboBoxCategorias;
+        private ListBox listBoxCategorias;
+    }
+}
