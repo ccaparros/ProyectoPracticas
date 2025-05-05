@@ -1,0 +1,54 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using Newtonsoft.Json;
+using InventarioPedidosWinForms.Models;
+
+namespace InventarioPedidosWinForms
+{
+    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private async void Form1_Load(object sender, EventArgs e)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+               
+                client.BaseAddress = new Uri("https://localhost:7117/");
+
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync("api/categorias");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string json = await response.Content.ReadAsStringAsync();
+                        var categorias = JsonConvert.DeserializeObject<List<Categoria>>(json);
+
+                        // Asignar a ComboBox
+                        comboBoxCategorias.DataSource = categorias;
+                        comboBoxCategorias.DisplayMember = "Nombre";
+                        comboBoxCategorias.ValueMember = "IdCategoria";
+
+                        // Asignar a ListBox
+                        listBoxCategorias.DataSource = new List<Categoria>(categorias); // evitar conflicto con mismo origen
+                        listBoxCategorias.DisplayMember = "Nombre";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error al obtener categorías desde la API.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}");
+                }
+            }
+        }
+    }
+}
