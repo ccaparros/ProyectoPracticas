@@ -1,0 +1,141 @@
+using InventarioPedidosWinForms.Models;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace InventarioPedidosWinForms
+{
+    public partial class FormPedidos : Form
+    {
+        private readonly HttpClient _httpClient;
+        private List<Producto> _productosSeleccionados = new List<Producto>();
+
+        public FormPedidos(HttpClient httpClient)
+        {
+            InitializeComponent();
+            _httpClient = httpClient;
+        }
+
+        private async void FormPedidos_Load(object sender, EventArgs e)
+        {
+            await CargarCategoriasYProductos();
+        }
+
+        // Cargar las categorías y productos en el TreeView
+        private async Task CargarCategoriasYProductos()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync("api/categorias");
+                response.EnsureSuccessStatusCode();
+                var categorias = await response.Content.ReadFromJsonAsync<List<Categoria>>();
+
+                treeViewCategorias.Nodes.Clear();
+                var productosTasks = new List<Task>();
+
+                foreach (var categoria in categorias)
+                {
+                    var nodeCategoria = new TreeNode(categoria.NombreCategoria) { Tag = categoria.IdCategoria };
+                    treeViewCategorias.Nodes.Add(nodeCategoria);
+
+                    // Agregar tarea para obtener productos de cada categoría
+                    var productosTask = _httpClient.GetAsync($"api/productos?categoriaId={categoria.IdCategoria}")
+                        .ContinueWith(async task =>
+                        {
+                            var responseProductos = await task;
+                            responseProductos.EnsureSuccessStatusCode();
+                            var productos = await responseProductos.Content.ReadFromJsonAsync<List<Producto>>();
+
+                            foreach (var producto in productos)
+                            {
+                                var nodeProducto = new TreeNode(producto.NombreProducto) { Tag = producto.IdProducto };
+                                nodeCategoria.Nodes.Add(nodeProducto);
+                            }
+                        });
+                    productosTasks.Add(productosTask);
+                }
+
+                // Esperar a que todas las tareas de carga de productos se completen
+                await Task.WhenAll(productosTasks);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar categorías y productos: {ex.Message}");
+            }
+        }
+
+        // Agregar un producto seleccionado a la lista de productos del pedido
+        private void btnAgregarProducto_Click(object sender, EventArgs e)
+        {
+            if (treeViewCategorias.SelectedNode != null && treeViewCategorias.SelectedNode.Tag is int productoId)
+            {
+                var cantidad = (int)numericUpDownCantidad.Value;
+
+                if (cantidad > 0)
+                {
+                    // Verificar si el producto ya ha sido agregado
+                    var productoExistente = _productosSeleccionados.Find(p => p.IdProducto == productoId);
+                    if (productoExistente != null)
+                    {
+                        // Si el producto ya existe, solo actualizar la cantidad
+                        productoExistente.Cantidad += cantidad;
+                    }
+                    else
+                    {
+                        // Si no existe, agregar nuevo producto
+                        var producto = new Producto
+                        {
+                            IdProducto = productoId,
+                            NombreProducto = treeViewCategorias.SelectedNode.Text,
+                            Cantidad = cantidad
+                        };
+                        _productosSeleccionados.Add(producto);
+                    }
+
+                    // Actualizar el DataGridView con los productos seleccionados
+                    dataGridViewProductos.DataSource = null;
+                    dataGridViewProductos.DataSource = _productosSeleccionados;
+                }
+                else
+                {
+                    MessageBox.Show("Por favor, ingresa una cantidad válida.");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Selecciona un producto válido.");
+            }
+        }
+
+        // Crear el pedido con los productos seleccionados
+        private async void btnCrearPedido_Click(object sender, EventArgs e)
+        {
+            var pedido = new Pedidos
+            {
+                ClienteId = (int)comboBoxCliente.SelectedValue,
+                Fecha = dateTimePickerFecha.Value,
+                Productos = _productosSeleccionados
+            };
+
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/pedidos", pedido);
+                if (response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Pedido creado exitosamente.");
+                }
+                else
+                {
+                    MessageBox.Show("Error al crear el pedido.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al enviar el pedido: {ex.Message}");
+            }
+        }
+    }
+}
