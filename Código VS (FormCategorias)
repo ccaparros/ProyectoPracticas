@@ -1,0 +1,115 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using InventarioPedidosWinForms.Models;
+
+namespace InventarioPedidosWinForms
+{
+    public partial class FormCategorias : Form
+    {
+        private readonly HttpClient _httpClient;
+
+        public FormCategorias(HttpClient httpClient)
+        {
+            InitializeComponent();
+            _httpClient = httpClient;
+        }
+
+        private async void FormCategorias_Load(object sender, EventArgs e)
+        {
+            await CargarCategorias();
+        }
+
+        private async Task CargarCategorias()
+        {
+            try
+            {
+                var categorias = await _httpClient.GetFromJsonAsync<List<Categoria>>("api/categorias");
+                listBoxCategorias.DataSource = categorias;
+                listBoxCategorias.DisplayMember = "NombreCategoria";
+                listBoxCategorias.ValueMember = "IdCategoria";
+                comboBoxCategorias.DataSource = new List<Categoria>(categorias);
+                comboBoxCategorias.DisplayMember = "NombreCategoria";
+                comboBoxCategorias.ValueMember = "IdCategoria";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar categorías: {ex.Message}");
+            }
+        }
+
+        private async void btnAgregar_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(txtNombreCategoria.Text))
+            {
+                MessageBox.Show("Por favor ingresa un nombre para la categoría.");
+                return;
+            }
+
+            var categoria = new Categoria { NombreCategoria = txtNombreCategoria.Text };
+            var response = await _httpClient.PostAsJsonAsync("api/categorias", categoria);
+
+            if (response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Categoría agregada correctamente.");
+                await CargarCategorias();
+            }
+            else
+            {
+                MessageBox.Show("Error al agregar la categoría.");
+            }
+        }
+
+        private async void btnModificar_Click(object sender, EventArgs e)
+        {
+            if (!int.TryParse(txtIdCategoria.Text, out int id))
+            {
+                MessageBox.Show("ID inválido.");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(txtNombreCategoria.Text))
+            {
+                MessageBox.Show("Nombre requerido.");
+                return;
+            }
+
+            var categoria = new Categoria { IdCategoria = id, NombreCategoria = txtNombreCategoria.Text };
+            var response = await _httpClient.PutAsJsonAsync($"api/categorias/{id}", categoria);
+
+            if (response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Categoría modificada.");
+                await CargarCategorias();
+            }
+            else
+            {
+                MessageBox.Show("Error al modificar.");
+            }
+        }
+
+        private async void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (!int.TryParse(txtIdCategoria.Text, out int id))
+            {
+                MessageBox.Show("ID inválido.");
+                return;
+            }
+
+            var response = await _httpClient.DeleteAsync($"api/categorias/{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                MessageBox.Show("Categoría eliminada.");
+                await CargarCategorias();
+            }
+            else
+            {
+                MessageBox.Show("Error al eliminar.");
+            }
+        }
+    }
+}
