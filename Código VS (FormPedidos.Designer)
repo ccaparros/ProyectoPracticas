@@ -1,0 +1,115 @@
+namespace InventarioPedidosWinForms
+{
+    partial class FormPedidos
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.comboBoxCliente = new System.Windows.Forms.ComboBox();
+            this.dateTimePickerFecha = new System.Windows.Forms.DateTimePicker();
+            this.treeViewCategorias = new System.Windows.Forms.TreeView();
+            this.numericUpDownCantidad = new System.Windows.Forms.NumericUpDown();
+            this.dataGridViewProductos = new System.Windows.Forms.DataGridView();
+            this.btnAgregarProducto = new System.Windows.Forms.Button();
+            this.btnCrearPedido = new System.Windows.Forms.Button();
+
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCantidad)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewProductos)).BeginInit();
+            this.SuspendLayout();
+
+            // comboBoxCliente
+            this.comboBoxCliente.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxCliente.FormattingEnabled = true;
+            this.comboBoxCliente.Location = new System.Drawing.Point(12, 12);
+            this.comboBoxCliente.Name = "comboBoxCliente";
+            this.comboBoxCliente.Size = new System.Drawing.Size(200, 23);
+            this.comboBoxCliente.TabIndex = 0;
+
+            // dateTimePickerFecha
+            this.dateTimePickerFecha.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dateTimePickerFecha.Location = new System.Drawing.Point(12, 41);
+            this.dateTimePickerFecha.Name = "dateTimePickerFecha";
+            this.dateTimePickerFecha.Size = new System.Drawing.Size(200, 23);
+            this.dateTimePickerFecha.TabIndex = 1;
+
+            // treeViewCategorias
+            this.treeViewCategorias.Location = new System.Drawing.Point(12, 70);
+            this.treeViewCategorias.Name = "treeViewCategorias";
+            this.treeViewCategorias.Size = new System.Drawing.Size(200, 300);
+            this.treeViewCategorias.TabIndex = 2;
+
+            // numericUpDownCantidad
+            this.numericUpDownCantidad.Location = new System.Drawing.Point(220, 70);
+            this.numericUpDownCantidad.Minimum = 1;
+            this.numericUpDownCantidad.Name = "numericUpDownCantidad";
+            this.numericUpDownCantidad.Size = new System.Drawing.Size(120, 23);
+            this.numericUpDownCantidad.TabIndex = 3;
+            this.numericUpDownCantidad.Value = 1;
+
+            // dataGridViewProductos
+            this.dataGridViewProductos.AllowUserToAddRows = false;
+            this.dataGridViewProductos.AllowUserToDeleteRows = false;
+            this.dataGridViewProductos.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridViewProductos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewProductos.Location = new System.Drawing.Point(220, 100);
+            this.dataGridViewProductos.Name = "dataGridViewProductos";
+            this.dataGridViewProductos.ReadOnly = true;
+            this.dataGridViewProductos.Size = new System.Drawing.Size(400, 270);
+            this.dataGridViewProductos.TabIndex = 4;
+
+            // btnAgregarProducto
+            this.btnAgregarProducto.Location = new System.Drawing.Point(220, 380);
+            this.btnAgregarProducto.Name = "btnAgregarProducto";
+            this.btnAgregarProducto.Size = new System.Drawing.Size(120, 30);
+            this.btnAgregarProducto.TabIndex = 5;
+            this.btnAgregarProducto.Text = "Agregar Producto";
+            this.btnAgregarProducto.UseVisualStyleBackColor = true;
+            this.btnAgregarProducto.Click += new System.EventHandler(this.btnAgregarProducto_Click);
+
+            // btnCrearPedido
+            this.btnCrearPedido.Location = new System.Drawing.Point(500, 380);
+            this.btnCrearPedido.Name = "btnCrearPedido";
+            this.btnCrearPedido.Size = new System.Drawing.Size(120, 30);
+            this.btnCrearPedido.TabIndex = 6;
+            this.btnCrearPedido.Text = "Crear Pedido";
+            this.btnCrearPedido.UseVisualStyleBackColor = true;
+            this.btnCrearPedido.Click += new System.EventHandler(this.btnCrearPedido_Click);
+
+            // FormPedidos
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(650, 430);
+            this.Controls.Add(this.btnCrearPedido);
+            this.Controls.Add(this.btnAgregarProducto);
+            this.Controls.Add(this.dataGridViewProductos);
+            this.Controls.Add(this.numericUpDownCantidad);
+            this.Controls.Add(this.treeViewCategorias);
+            this.Controls.Add(this.dateTimePickerFecha);
+            this.Controls.Add(this.comboBoxCliente);
+            this.Name = "FormPedidos";
+            this.Text = "Gestión de Pedidos";
+            this.Load += new System.EventHandler(this.FormPedidos_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCantidad)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewProductos)).EndInit();
+            this.ResumeLayout(false);
+        }
+
+        private System.Windows.Forms.ComboBox comboBoxCliente;
+        private System.Windows.Forms.DateTimePicker dateTimePickerFecha;
+        private System.Windows.Forms.TreeView treeViewCategorias;
+        private System.Windows.Forms.NumericUpDown numericUpDownCantidad;
+        private System.Windows.Forms.DataGridView dataGridViewProductos;
+        private System.Windows.Forms.Button btnAgregarProducto;
+        private System.Windows.Forms.Button btnCrearPedido;
+    }
+}
