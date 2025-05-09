@@ -1,0 +1,160 @@
+using InventarioPedidosWinForms.Models;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace InventarioPedidosWinForms
+{
+    public partial class FormProductos : Form
+    {
+        private readonly HttpClient _httpClient;
+        private List<Categoria> _categorias;
+        private List<Producto> _productos;
+
+        public FormProductos(HttpClient httpClient)
+        {
+            InitializeComponent();
+            _httpClient = httpClient;
+        }
+
+        private async void FormProductos_Load(object sender, EventArgs e)
+        {
+            await CargarCategorias();
+            await CargarProductos();
+        }
+
+        private async Task CargarCategorias()
+        {
+            try
+            {
+                _categorias = await _httpClient.GetFromJsonAsync<List<Categoria>>("api/categorias");
+                comboBoxCategoria.DataSource = _categorias;
+                comboBoxCategoria.DisplayMember = "NombreCategoria";
+                comboBoxCategoria.ValueMember = "IdCategoria";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar categorías: {ex.Message}");
+            }
+        }
+
+        private async Task CargarProductos()
+        {
+            try
+            {
+                _productos = await _httpClient.GetFromJsonAsync<List<Producto>>("api/productos");
+                dataGridViewProductos.DataSource = null;
+                dataGridViewProductos.DataSource = _productos;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error al cargar productos: {ex.Message}");
+            }
+        }
+
+        private async void btnAgregar_Click(object sender, EventArgs e)
+        {
+            var nuevoProducto = new Producto
+            {
+                NombreProducto = txtNombre.Text,
+                Precio = decimal.Parse(txtPrecio.Text),
+                Stock = int.Parse(txtStock.Text),
+                IdCategoria = (int)comboBoxCategoria.SelectedValue
+            };
+
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync("api/productos", nuevoProducto);
+                if (response.IsSuccessStatusCode)
+                {
+                    MessageBox.Show("Producto agregado correctamente.");
+                    await CargarProductos();
+                }
+                else
+                {
+                    MessageBox.Show("Error al agregar producto.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+        }
+
+        private async void btnEditar_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtIdProducto.Text, out int id))
+            {
+                var producto = new Producto
+                {
+                    IdProducto = id,
+                    NombreProducto = txtNombre.Text,
+                    Precio = decimal.Parse(txtPrecio.Text),
+                    Stock = int.Parse(txtStock.Text),
+                    IdCategoria = (int)comboBoxCategoria.SelectedValue
+                };
+
+                try
+                {
+                    var response = await _httpClient.PutAsJsonAsync($"api/productos/{id}", producto);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        MessageBox.Show("Producto actualizado.");
+                        await CargarProductos();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Error al actualizar producto.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}");
+                }
+            }
+        }
+
+        private async void btnEliminar_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(txtIdProducto.Text, out int id))
+            {
+                var confirm = MessageBox.Show("¿Estás seguro de eliminar este producto?", "Confirmar", MessageBoxButtons.YesNo);
+                if (confirm == DialogResult.Yes)
+                {
+                    try
+                    {
+                        var response = await _httpClient.DeleteAsync($"api/productos/{id}");
+                        if (response.IsSuccessStatusCode)
+                        {
+                            MessageBox.Show("Producto eliminado.");
+                            await CargarProductos();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Error al eliminar producto.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error: {ex.Message}");
+                    }
+                }
+            }
+        }
+
+        private void dataGridViewProductos_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && dataGridViewProductos.Rows[e.RowIndex].DataBoundItem is Producto producto)
+            {
+                txtIdProducto.Text = producto.IdProducto.ToString();
+                txtNombre.Text = producto.NombreProducto;
+                txtPrecio.Text = producto.Precio.ToString();
+                txtStock.Text = producto.Stock.ToString();
+                comboBoxCategoria.SelectedValue = producto.IdCategoria;
+            }
+        }
+    }
+}
