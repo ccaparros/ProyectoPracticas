@@ -1,0 +1,94 @@
+namespace InventarioPedidosWinForms
+{
+    partial class FormClientes
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        private TextBox txtNombreCliente;
+        private TextBox txtCorreoCliente;
+        private TextBox txtTelefonoCliente;
+        private Button btnGuardarCliente;
+        private Label lblNombreCliente;
+        private Label lblCorreoCliente;
+        private Label lblTelefonoCliente;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        private void InitializeComponent()
+        {
+            this.txtNombreCliente = new TextBox();
+            this.txtCorreoCliente = new TextBox();
+            this.txtTelefonoCliente = new TextBox();
+            this.btnGuardarCliente = new Button();
+            this.lblNombreCliente = new Label();
+            this.lblCorreoCliente = new Label();
+            this.lblTelefonoCliente = new Label();
+
+            this.SuspendLayout();
+
+            // txtNombreCliente
+            this.txtNombreCliente.Location = new Point(120, 30);
+            this.txtNombreCliente.Name = "txtNombreCliente";
+            this.txtNombreCliente.Size = new Size(200, 23);
+
+            // txtCorreoCliente
+            this.txtCorreoCliente.Location = new Point(120, 70);
+            this.txtCorreoCliente.Name = "txtCorreoCliente";
+            this.txtCorreoCliente.Size = new Size(200, 23);
+
+            // txtTelefonoCliente
+            this.txtTelefonoCliente.Location = new Point(120, 110);
+            this.txtTelefonoCliente.Name = "txtTelefonoCliente";
+            this.txtTelefonoCliente.Size = new Size(200, 23);
+
+            // btnGuardarCliente
+            this.btnGuardarCliente.Location = new Point(120, 150);
+            this.btnGuardarCliente.Name = "btnGuardarCliente";
+            this.btnGuardarCliente.Size = new Size(100, 23);
+            this.btnGuardarCliente.Text = "Guardar Cliente";
+            this.btnGuardarCliente.Click += new EventHandler(this.btnGuardarCliente_Click);
+
+            // lblNombreCliente
+            this.lblNombreCliente.AutoSize = true;
+            this.lblNombreCliente.Location = new Point(40, 30);
+            this.lblNombreCliente.Name = "lblNombreCliente";
+            this.lblNombreCliente.Size = new Size(50, 15);
+            this.lblNombreCliente.Text = "Nombre:";
+
+            // lblCorreoCliente
+            this.lblCorreoCliente.AutoSize = true;
+            this.lblCorreoCliente.Location = new Point(40, 70);
+            this.lblCorreoCliente.Name = "lblCorreoCliente";
+            this.lblCorreoCliente.Size = new Size(47, 15);
+            this.lblCorreoCliente.Text = "Correo:";
+
+            // lblTelefonoCliente
+            this.lblTelefonoCliente.AutoSize = true;
+            this.lblTelefonoCliente.Location = new Point(40, 110);
+            this.lblTelefonoCliente.Name = "lblTelefonoCliente";
+            this.lblTelefonoCliente.Size = new Size(58, 15);
+            this.lblTelefonoCliente.Text = "Teléfono:";
+
+            // FormClientes
+            this.ClientSize = new Size(400, 250);
+            this.Controls.Add(this.lblNombreCliente);
+            this.Controls.Add(this.lblCorreoCliente);
+            this.Controls.Add(this.lblTelefonoCliente);
+            this.Controls.Add(this.txtNombreCliente);
+            this.Controls.Add(this.txtCorreoCliente);
+            this.Controls.Add(this.txtTelefonoCliente);
+            this.Controls.Add(this.btnGuardarCliente);
+            this.Name = "FormClientes";
+            this.Text = "Gestionar Clientes";
+            this.ResumeLayout(false);
+            this.PerformLayout();
+        }
+    }
+}
