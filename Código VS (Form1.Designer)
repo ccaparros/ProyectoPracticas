@@ -7,136 +7,81 @@ namespace InventarioPedidosWinForms
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
+            {
                 components.Dispose();
+            }
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #region Código generado por el Diseñador de Windows Forms
 
         private void InitializeComponent()
         {
-            comboBoxCategorias = new ComboBox();
-            listBoxCategorias = new ListBox();
-            txtIdCategoria = new TextBox();
-            label1 = new Label();
-            label2 = new Label();
-            txtNombreCategoria = new TextBox();
-            btnAgregar = new Button();
-            btnModificar = new Button();
-            btnEliminar = new Button();
-            SuspendLayout();
+            this.btnGestionarCategorias = new System.Windows.Forms.Button();
+            this.btnGestionarProductos = new System.Windows.Forms.Button();
+            this.btnGestionarClientes = new System.Windows.Forms.Button();
+            this.btnGestionarPedidos = new System.Windows.Forms.Button();
+            this.SuspendLayout();
             // 
-            // comboBoxCategorias
+            // btnGestionarCategorias
             // 
-            comboBoxCategorias.FormattingEnabled = true;
-            comboBoxCategorias.Location = new Point(503, 53);
-            comboBoxCategorias.Name = "comboBoxCategorias";
-            comboBoxCategorias.Size = new Size(121, 23);
-            comboBoxCategorias.TabIndex = 0;
+            this.btnGestionarCategorias.Location = new System.Drawing.Point(12, 12);
+            this.btnGestionarCategorias.Name = "btnGestionarCategorias";
+            this.btnGestionarCategorias.Size = new System.Drawing.Size(200, 50);
+            this.btnGestionarCategorias.TabIndex = 0;
+            this.btnGestionarCategorias.Text = "Gestionar Categorías";
+            this.btnGestionarCategorias.UseVisualStyleBackColor = true;
+            this.btnGestionarCategorias.Click += new System.EventHandler(this.btnGestionarCategorias_Click);
             // 
-            // listBoxCategorias
+            // btnGestionarProductos
             // 
-            listBoxCategorias.FormattingEnabled = true;
-            listBoxCategorias.ItemHeight = 15;
-            listBoxCategorias.Location = new Point(70, 21);
-            listBoxCategorias.Name = "listBoxCategorias";
-            listBoxCategorias.Size = new Size(200, 94);
-            listBoxCategorias.TabIndex = 1;
-            listBoxCategorias.SelectedIndexChanged += listBoxCategorias_SelectedIndexChanged;
+            this.btnGestionarProductos.Location = new System.Drawing.Point(12, 68);
+            this.btnGestionarProductos.Name = "btnGestionarProductos";
+            this.btnGestionarProductos.Size = new System.Drawing.Size(200, 50);
+            this.btnGestionarProductos.TabIndex = 1;
+            this.btnGestionarProductos.Text = "Gestionar Productos";
+            this.btnGestionarProductos.UseVisualStyleBackColor = true;
+            this.btnGestionarProductos.Click += new System.EventHandler(this.btnGestionarProductos_Click);
             // 
-            // txtIdCategoria
+            // btnGestionarClientes
             // 
-            txtIdCategoria.Location = new Point(70, 254);
-            txtIdCategoria.Name = "txtIdCategoria";
-            txtIdCategoria.Size = new Size(100, 23);
-            txtIdCategoria.TabIndex = 2;
+            this.btnGestionarClientes.Location = new System.Drawing.Point(12, 124);
+            this.btnGestionarClientes.Name = "btnGestionarClientes";
+            this.btnGestionarClientes.Size = new System.Drawing.Size(200, 50);
+            this.btnGestionarClientes.TabIndex = 2;
+            this.btnGestionarClientes.Text = "Gestionar Clientes";
+            this.btnGestionarClientes.UseVisualStyleBackColor = true;
+            this.btnGestionarClientes.Click += new System.EventHandler(this.btnGestionarClientes_Click);
             // 
-            // label1
+            // btnGestionarPedidos
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(70, 236);
-            label1.Name = "label1";
-            label1.Size = new Size(66, 15);
-            label1.TabIndex = 3;
-            label1.Text = "ID Categoría";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(70, 296);
-            label2.Name = "label2";
-            label2.Size = new Size(107, 15);
-            label2.TabIndex = 4;
-            label2.Text = "Nombre Categoría";
-            // 
-            // txtNombreCategoria
-            // 
-            txtNombreCategoria.Location = new Point(70, 314);
-            txtNombreCategoria.Name = "txtNombreCategoria";
-            txtNombreCategoria.Size = new Size(200, 23);
-            txtNombreCategoria.TabIndex = 5;
-            // 
-            // btnAgregar
-            // 
-            btnAgregar.Location = new Point(518, 232);
-            btnAgregar.Name = "btnAgregar";
-            btnAgregar.Size = new Size(100, 23);
-            btnAgregar.TabIndex = 6;
-            btnAgregar.Text = "Agregar";
-            btnAgregar.UseVisualStyleBackColor = true;
-            btnAgregar.Click += btnAgregar_Click;
-            // 
-            // btnModificar
-            // 
-            btnModificar.Location = new Point(518, 270);
-            btnModificar.Name = "btnModificar";
-            btnModificar.Size = new Size(100, 23);
-            btnModificar.TabIndex = 7;
-            btnModificar.Text = "Modificar";
-            btnModificar.UseVisualStyleBackColor = true;
-            btnModificar.Click += btnModificar_Click;
-            // 
-            // btnEliminar
-            // 
-            btnEliminar.Location = new Point(518, 312);
-            btnEliminar.Name = "btnEliminar";
-            btnEliminar.Size = new Size(100, 23);
-            btnEliminar.TabIndex = 8;
-            btnEliminar.Text = "Eliminar";
-            btnEliminar.UseVisualStyleBackColor = true;
-            btnEliminar.Click += btnEliminar_Click;
+            this.btnGestionarPedidos.Location = new System.Drawing.Point(12, 180);
+            this.btnGestionarPedidos.Name = "btnGestionarPedidos";
+            this.btnGestionarPedidos.Size = new System.Drawing.Size(200, 50);
+            this.btnGestionarPedidos.TabIndex = 3;
+            this.btnGestionarPedidos.Text = "Crear Pedido";
+            this.btnGestionarPedidos.UseVisualStyleBackColor = true;
+            this.btnGestionarPedidos.Click += new System.EventHandler(this.btnGestionarPedidos_Click);
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(748, 450);
-            Controls.Add(btnEliminar);
-            Controls.Add(btnModificar);
-            Controls.Add(btnAgregar);
-            Controls.Add(txtNombreCategoria);
-            Controls.Add(label2);
-            Controls.Add(label1);
-            Controls.Add(txtIdCategoria);
-            Controls.Add(listBoxCategorias);
-            Controls.Add(comboBoxCategorias);
-            Name = "Form1";
-            Text = "Gestión de Categorías";
-            Load += Form1_Load;
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnGestionarPedidos);
+            this.Controls.Add(this.btnGestionarClientes);
+            this.Controls.Add(this.btnGestionarProductos);
+            this.Controls.Add(this.btnGestionarCategorias);
+            this.Name = "Form1";
+            this.Text = "Gestión de Inventario y Pedidos";
+            this.ResumeLayout(false);
         }
 
         #endregion
 
-        private ComboBox comboBoxCategorias;
-        private ListBox listBoxCategorias;
-        private TextBox txtIdCategoria;
-        private Label label1;
-        private Label label2;
-        private TextBox txtNombreCategoria;
-        private Button btnAgregar;
-        private Button btnModificar;
-        private Button btnEliminar;
+        private System.Windows.Forms.Button btnGestionarCategorias;
+        private System.Windows.Forms.Button btnGestionarProductos;
+        private System.Windows.Forms.Button btnGestionarClientes;
+        private System.Windows.Forms.Button btnGestionarPedidos;
     }
 }
